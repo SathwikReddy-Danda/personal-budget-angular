@@ -10,8 +10,8 @@ body {
 div.menu {
     width: 100%;
     background-color: #4d5791;
-    height: 44px;
-    padding: 0 40px;
+    height: 60px;
+    padding: 10px;
 }
 
 div.menu ul,
@@ -40,7 +40,7 @@ div.menu ul li a:hover  {
 div.hero {
     height: 350px;
     background-color: #b4c6f0;
-    background-image: url('/bg.png');
+    background-image: url('/pb/bg.png');
     background-size: 400px;
     background-repeat: no-repeat;
     background-position: center bottom;
@@ -74,9 +74,9 @@ div.hero h2 {
 }
 
 .bottom {
-    height: 50px;
+    height: 80px;
     background-color: #b4c6f0;
-    padding: 40px;
+    padding: 10px;
 }
 
 .center {
@@ -89,6 +89,10 @@ div.hero h2 {
     max-width: 340px;
     text-align: justify;
     margin: 20px;
+}
+.image {
+    width: 1px;
+    height: 1px;
 }
 
 @media screen and (min-width: 768px) {
