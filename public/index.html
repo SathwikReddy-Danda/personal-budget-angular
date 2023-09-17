@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Budget</title>
+    <!-- This is an SEO Change -->
+    <meta name="Author" content="Sathwik Reddy Danda">
+    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="main.css">
+    <!-- This is an SEO Change -->
+    <link rel="canonical"  href="http://204.48.20.235/pb/">
+    <!-- This is an SEO Change -->
+    <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+    <div class="menu">
+        <!--This is an A11y change-->
+        <nav role="navigation">
+        <ul>
+            <li><a href="/">Homepage</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/login.html">Login</a></li>
+            <li><a href="https://google.com">Google</a></li>
+            <!--This is an A11y change--><!--Added Button Role-->
+            <li><a href="https://github.com" role="button">GitHub</a></li>
+        </ul>
+        </nav>
+    </div>
+
+    <div class="hero">
+        <h1>Personal Budget</h1>
+        <h2>A personal-budget management app</h2>
+        <!--This is a Semantic HTML change-->
+        <header>
+            <h2> This is done by Sathwik Reddy Danda</h2>
+        </header>
+        <!--This is an A11y change-->
+        <h2><p><i lang="fr">Garder le sourire</i></p></h2>
+    </div>
+
+    <div class="container center">
+
+        <div class="page-area">
+
+            <div class="text-box">
+            <!--This is a Semantic HTML change(added Section tags)-->
+                <section>
+                <h1>Stay on track</h1>
+                <p>
+                    Do you know where you are spending your money? If you really stop to track it down,
+                    you would get surprised! Proper budget management depends on real data... and this
+                    app will help you with that!
+                </p>
+                </section>
+            </div>
+    
+            <div class="text-box">
+                <section>
+                <h1>Alerts</h1>
+                <p>
+                    What if your clothing budget ended? You will get an alert. The goal is to never go over the budget.
+                </p>
+                <section>
+            </div>
+    
+            <div class="text-box">
+                <section>
+                <h1>Results</h1>
+                <p>
+                    People who stick to a financial plan, budgeting every expense, get out of debt faster!
+                    Also, they to live happier lives... since they expend without guilt or fear... 
+                    because they know it is all good and accounted for.
+                </p>
+            </section>
+            </div>
+    
+            <div class="text-box">
+            <section>
+                <h1>Free</h1>
+                <p>
+                    This app is free!!! And you are the only one holding your data!
+                </p>
+            </section>
+            </div>
+    
+            <div class="text-box">
+            <section>
+                <h1>Stay on track</h1>
+                <p>
+                    Do you know where you are spending your money? If you really stop to track it down,
+                    you would get surprised! Proper budget management depends on real data... and this
+                    app will help you with that!
+                </p>
+            </section>
+            </div>
+    
+            <div class="text-box">
+                <section>
+                <h1>Alerts</h1>
+                <p>
+                    What if your clothing budget ended? You will get an alert. The goal is to never go over the budget.
+                </p>
+                </section>
+            </div>
+    
+            <div class="text-box">
+                <section>
+                <h1>Results</h1>
+                <p>
+                    People who stick to a financial plan, budgeting every expense, get out of debt faster!
+                    Also, they to live happier lives... since they expend without guilt or fear... 
+                    because they know it is all good and accounted for.
+                </p>
+                </section>
+            </div>
+    
+            <div class="text-box">
+                <section>
+                <h1>Free</h1>
+                <p>
+                    This app is free!!! And you are the only one holding your data!
+                </p>
+                </section>
+            </div>
+
+            <div class="text-box">
+                <h1>Chart</h1>
+                <p>
+                    <canvas id="myChart" width="400" height="400"></canvas>
+                </p>
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <div class="bottom">
+        <div class="center">
+            All rights reserved &copy; Sathwik Reddy Danda
+            <!--This is a Semantic HTML change-->
+            <footer>
+                <p>Author: Sathwik Reddy Danda</p>
+                <p><a href="mailto:sdanda@uncc.edu">sdanda1@uncc.edu</a></p>
+            </footer>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js" integrity="sha512-quHCp3WbBNkwLfYUMd+KwBAgpVukJu5MncuQaWXgCrfgcxCJAq/fo+oqrRKOj+UKEmyMCG3tb8RB63W+EmrOBg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" integrity="sha512-s+xg36jbIujB2S2VKfpGmlC3T5V2TF3lY48DX7u2r9XzGzgPsa6wTpOQA7J9iffvdeBN0q9tKzRxVxw1JviZPg==" crossorigin="anonymous"></script>
+
+    <script>
+        var dataSource = {
+                datasets: [
+                    {
+                        data: [],
+                        backgroundColor: [
+                            '#ffcd56',
+                            '#ff6384',
+                            '#36a2eb',
+                            '#fd6b19',
+                        ]
+                    }
+                ],
+                labels: []
+            };
+
+        function createChart() {
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myPieChart = new Chart(ctx, {
+                type: 'pie',
+                data: dataSource
+            });
+        }
+
+        function getBudget() {
+            axios.get('/budget')
+            .then(function (res) {
+                console.log(res);
+                for (var i = 0; i < res.data.myBudget.length; i++) {
+                    dataSource.datasets[0].data[i] = res.data.myBudget[i].budget;
+                    dataSource.labels[i] = res.data.myBudget[i].title;
+                    createChart();
+                }
+            });
+        }
+
+        getBudget();
+    </script>
+
+</body>
+</html
