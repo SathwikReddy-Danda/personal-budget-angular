@@ -1,0 +1,33 @@
+{
+    "myBudget" :
+    [
+    {
+        "title": "Food",
+        "budget": 100
+    },
+    {
+        "title": "Rent",
+        "budget": 275
+    },
+    {
+        "title": "Grocery",
+        "budget": 110
+    },
+    {
+        "title": "Movies",
+        "budget": 50
+    },
+    {
+        "title": "Shopping",
+        "budget": 75
+    },
+    {
+        "title": "Car Maintenance",
+        "budget": 50
+    },
+    {
+        "title": "Medicine",
+        "budget": 40
+    }
+    ]
+}
