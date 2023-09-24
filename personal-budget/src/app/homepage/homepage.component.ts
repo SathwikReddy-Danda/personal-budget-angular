@@ -1,116 +1,139 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Chart } from 'chart.js/auto';
 import * as d3 from 'd3';
 import { DataService } from '../data.service';
 
-
 @Component({
   selector: 'pb-homepage',
   templateUrl: './homepage.component.html',
-  styleUrls: ['./homepage.component.scss']
+  styleUrls: ['./homepage.component.scss'],
 })
 export class HomepageComponent implements AfterViewInit {
-
-  public dataSource: any = {
-    datasets: [
-        {
-            data: [],
-            backgroundColor: [
-              "#ffcd56",
-              "#ff6384",
-              "#36a2eb",
-              "#fd6b19",
-              "#ff1a1a",
-              "#00ff00",
-              "#0000ff",
-            ],
-        }
-    ],
-    labels: []
-};
-
-public data = [];
-public labelText = [];
-private svg: any;
-  private width = 650;
-  private height = 800;
-  private margin = 50;
-  private colors: any;
-  private radius = Math.min(this.width, this.height) / 2 - this.margin;
+  outerArc: any;
+  dataReady: any;
+  dataSource: any;
+  width = 600;
+  height = 300;
+  radius = Math.min(this.width, this.height) / 2;
+  svg: any;
+  color: any;
+  pie: any;
+  key: any;
+  arc: any;
 
 
-  constructor(private http: HttpClient, private budgetData: DataService) {   }
-
-  ngAfterViewInit(): void {
-    this.budgetData.getData().subscribe(data =>{
-      this.data = data.myBudget;
-      for (var i = 0 ; i < data.myBudget.length; i++) {
-            this.dataSource.datasets[0].data[i] = data.myBudget[i].budget;
-             this.dataSource.labels[i] = data.myBudget[i].title;
-    }
-    this.createChart();
-    this.createSvg();
-    this.createColors();
-    this.drawChart();
-
-  });
+  constructor(private http: HttpClient, private dataService: DataService) {
   }
 
-  private createSvg(): void {
-    this.svg = d3.select("figure#pie")
-    .append("svg")
-    .attr("width", this.width)
-    .attr("height", this.height)
-    .append("g")
-    .attr(
-      "transform",
-      "translate(" + this.width / 2 + "," + this.height / 2 + ")"
-    );
-}
+  ngAfterViewInit(): void {
+        setTimeout(() => {
+            this.dataSource = this.dataService.dataSource;
+            this.createChart();
+            this.draw();
+          }, 1000);
+  }
 
   private createChart(): void {
-    var ctx: any = document.getElementById('myChart');
-    var myPieChart = new Chart (ctx, {
-        type: 'pie',
-        data: this.dataSource
+    const ctx: any = document.getElementById('myChart');
+    const myPieChart = new Chart(ctx, {
+      type: 'pie',
+      data: this.dataSource,
     });
   }
 
-private createColors(): void {
-  this.colors = d3.scaleOrdinal()
-  .domain(this.data.map((d:any) => d.budget.toString()))
-  .range(["#ffcd56", "#ff6384", "#36a2eb", "#fd6b19", "#ff1a1a", "#00ff00", "#0000ff" ]);
-}
-private drawChart(): void {
-  const pie = d3.pie<any>().value((d: any) => Number(d.budget));
 
-  this.svg
-  .selectAll('pieces')
-  .data(pie(this.data))
+  private draw(): void {
+    this.svg = d3.select('svg')
+               .attr('width', this.width)
+               .attr('height', this.height)
+               .append('g')
+               .attr('transform', 'translate(' + this.width / 2 + ',' +
+                this.height / 2 + ')');
+    this.radius = Math.min(this.width, this.height) / 2 ;
+
+    this.color = d3.scaleOrdinal()
+           .domain(this.dataSource.labels)
+           .range([
+           "#ffcd56",
+           "#ff6384",
+           "#36a2eb",
+           "#fd6b19",
+           "#ff1a1a",
+           "#00ff00",
+           "#0000ff" ]);
+
+    this.pie = d3.pie()
+    .sort(null)
+    .value((d: any) => d.value);
+
+    this.dataReady = this.pie(this.getData());
+
+    this.arc = d3.arc()
+    .innerRadius(this.radius * 0.4)
+    .outerRadius(this.radius * 0.8);
+
+    this.outerArc = d3.arc()
+    .innerRadius(this.radius * 0.9)
+    .outerRadius(this.radius * 0.9);
+
+    this.svg
+  .selectAll('allSlices')
+  .data(this.dataReady)
   .enter()
   .append('path')
-  .attr('d', d3.arc()
-    .innerRadius(100)
-    .outerRadius(this.radius)
-  )
-  .attr('fill', (d: any, i: any) => (this.colors(i)))
-  .attr("stroke", "black")
-  .style("stroke-width", "1px");
+  .attr('d', this.arc)
+  .attr('fill', (d: any) => (this.color(d.data.label)))
+  .attr('stroke', 'white')
+  .style('stroke-width', '2.5px')
+  .style('opacity', 1);
 
-  const labelLocation = d3.arc()
-  .innerRadius(100)
-  .outerRadius(this.radius);
-
-  this.svg
-  .selectAll('pieces')
-  .data(pie(this.data))
+    this.svg
+  .selectAll('allPolyline')
+  .data(this.dataReady)
   .enter()
-  .append('text')
-  .text((d: { data: { title: any; }; }) => d.data.title)
-  .attr("transform", (d: d3.DefaultArcObject) => "translate(" + labelLocation.centroid(d) + ")")
-  .style("text-anchor", "middle")
-  .style("font-size", 15);
-}
+  .append('polyline')
+    .attr('stroke', 'black')
+    .style('fill', 'none')
+    .attr('stroke-width', 1)
+    .attr('points', (d:any) => {
+        const posA = this.arc.centroid(d);
+        const posB = this.outerArc.centroid(d);
+        const posC = this.outerArc.centroid(d);
+        posC[0] = this.radius * 0.95 * (this.midAngle(d) < Math.PI ? 1 : -1);
+        return [posA, posB, posC];
+      });
 
+
+    this.svg
+      .selectAll('allLabels')
+      .data(this.dataReady)
+      .enter()
+      .append('text')
+        .text( (d: any) => { console.log(d.data.label); return d.data.label; } )
+        .attr('transform', (d: any) => {
+            const pos = this.outerArc.centroid(d);
+            pos[0] = this.radius * 0.99 * (this.midAngle(d) < Math.PI ? 1 : -1);
+            return 'translate(' + pos + ')';
+          })
+        .style('text-anchor', (d: any) => {
+            return (this.midAngle(d) < Math.PI ? 'start' : 'end');
+          });
+    }
+
+    private midAngle(d: { startAngle: number; endAngle: number; }) {
+      return d.startAngle + (d.endAngle - d.startAngle) / 2;
+    }
+
+    private getData() {
+      const arr = [];
+      const labels = this.dataSource.labels;
+      for (var i = 0; i < this.dataSource.datasets[0].data.length; i++) {
+        arr.push({
+          label: labels[i],
+          value: this.dataSource.datasets[0].data[i],
+        });
+      }
+      return arr;
+    }
 }
