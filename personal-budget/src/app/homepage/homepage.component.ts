@@ -33,15 +33,16 @@ export class HomepageComponent implements AfterViewInit {
 public data = [];
 public labelText = [];
 private svg: any;
-  private margin = 50;
   private width = 650;
   private height = 800;
-  private radius = Math.min(this.width, this.height) / 2 - this.margin;
+  private margin = 50;
   private colors: any;
+  private radius = Math.min(this.width, this.height) / 2 - this.margin;
+
 
   constructor(private http: HttpClient, private budgetData: DataService) {   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.budgetData.getData().subscribe(data =>{
       this.data = data.myBudget;
       for (var i = 0 ; i < data.myBudget.length; i++) {
@@ -56,14 +57,6 @@ private svg: any;
   });
   }
 
-  createChart() {
-    var ctx: any = document.getElementById('myChart');
-    var myPieChart = new Chart (ctx, {
-        type: 'pie',
-        data: this.dataSource
-    });
-  }
-
   private createSvg(): void {
     this.svg = d3.select("figure#pie")
     .append("svg")
@@ -75,6 +68,15 @@ private svg: any;
       "translate(" + this.width / 2 + "," + this.height / 2 + ")"
     );
 }
+
+  private createChart(): void {
+    var ctx: any = document.getElementById('myChart');
+    var myPieChart = new Chart (ctx, {
+        type: 'pie',
+        data: this.dataSource
+    });
+  }
+
 private createColors(): void {
   this.colors = d3.scaleOrdinal()
   .domain(this.data.map((d:any) => d.budget.toString()))
@@ -93,7 +95,7 @@ private drawChart(): void {
     .outerRadius(this.radius)
   )
   .attr('fill', (d: any, i: any) => (this.colors(i)))
-  .attr("stroke", "#121926")
+  .attr("stroke", "black")
   .style("stroke-width", "1px");
 
   const labelLocation = d3.arc()
